@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Menu {% endblock title %}
+ 
+{% block style %}
+.menu-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .menu-item {
+    flex-basis: calc(33.33% - 20px);
+    padding: 15px;
+    margin-bottom: 30px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .menu-item-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .menu-item-name {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #777;
+  }
+  
+  .menu-item-description {
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  .menu-item-price {
+    font-size: 1.1rem;
+    margin-top: 5px;
+    color: #770007;
+  }
+  
+  .menu-item-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 20px;
+    background-color: #e54b38;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  
+  .menu-item-button:hover {
+    background-color: #e53b19;
+  }
+  
+  /* Media Queries for Responsive Design */
+  @media (max-width: 768px) {
+    .menu-item {
+      flex-basis: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .menu-item {
+      flex-basis: 100%;
+    }
+  }
+  
+
+{% endblock style %}
+
+{% block content %}
+
+  <!-- ............................ -->
+  <!--  menu section  -->
+  <!-- ............................ -->
+    <section class="text-white bg-base body-font" id="menu">
+        <div class="container px-5 py-24 mx-auto">
+            <div class="flex flex-col text-center w-full mb-20">
+                <h1 class="sm:text-3xl text-2xl font-bold title-font mb-4 text-white">Our Menu</h1>
+                <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Indulge in a burst of flavors with our delectable burger creations. Elevate your taste experience with every bite. Join us today to savor the joy of mouthwatering perfection!</p>
+            </div>
+            
+            <div class="container">
+                <div class="menu-items">
+                  {% for item in items %}
+                  <div class="menu-item">
+                    <img src="{{ item.image.url }}" alt="{{ item.name }}" class="menu-item-image">
+                    <h2 class="menu-item-name">{{ item.name }}</h2>
+                    <p class="menu-item-description">{{ item.description }}</p>
+                    <p class="menu-item-description">Category: {{ item.category }}</p>
+                    <p class="menu-item-price">₦{{ item.price}}</p>
+                    <a href="{% url 'add_to_cart' item.id %}" class="menu-item-button">
+                        <span class="add-to-cart-icon">+🛒</span>Add to Cart</a>
+                  </div>
+                  {% endfor %}
+                </div>
+            </div>
+          
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block scripts %} 
+{% endblock %}

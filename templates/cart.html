@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %} Cart 🛒 {% endblock title %}
+{% block style %}
+  <!-- Include Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Your existing CSS styles for the cart page -->
+
+  .cart-container {
+    padding: 20px;
+  }
+
+  .cart-heading {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #f8f9fa;
+    text-align: center;
+  }
+
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cart-table th, .cart-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    color: #f8f9fa;
+  }
+
+  .cart-item {
+    display: flex;
+    margin-bottom: 15px;
+  }
+
+  .cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .cart-item-details {
+    flex-grow: 1;
+  }
+
+  .cart-item-title {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .cart-item-price {
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  .cart-item-quantity {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .order-summary {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .order-summary h5 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .order-summary p {
+    margin: 0;
+  }
+
+  .checkout-btn {
+    display: block;
+    width: 100%;
+    background-color: #e54b38;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .checkout-btn:hover {
+    background-color: #e53b19;
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+  }
+
+  .quantity-label {
+    margin: 0;
+    font-size: 14px;
+    margin-right: 10px;
+  }
+
+  .quantity-btn {
+    background-color: #e54b38;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .quantity-value {
+    font-size: 16px;
+    margin: 0 10px;
+  }
+
+  @media (max-width: 768px) {
+    .cart-item {
+      flex-direction: column;
+    }
+
+    .cart-item-image {
+      width: 100%;
+      height: auto;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  }
+
+  /* Additional styles for the "Remove from Cart" button */
+  .remove-btn {
+    background-color: #e54b38;
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .remove-btn:hover {
+    background-color: #e53b19;
+  }
+{% endblock style %}
+
+{% block content %}
+<br><br><br>
+  <div class="container-fluid cart-container">
+    <h1 class="cart-heading">Your Cart 🛒</h1>
+    <div class="flex justify-center"> <!-- Center the card -->
+      <div class="w-full max-w-3xl rounded overflow-hidden shadow-lg"> <!-- Apply Tailwind CSS classes for the card -->
+        <div class="px-6 py-4"> <!-- Padding for the card's content -->
+          <table class="table cart-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Price (₦)</th>
+                <th>Quantity</th>
+                <th>Subtotal (₦)</th>
+                <th>Action</th>  <!-- Added column for Remove button -->
+              </tr>
+            </thead>
+            <tbody>
+              {% for order_item in order_items %}
+                <tr>
+                  <td>
+                    <div class="cart-item">
+                      <img src="{{ order_item.item.image.url }}" alt="{{ order_item.item.name }}" class="cart-item-image">
+                      <div class="cart-item-details">
+                          <h3 class="cart-item-title">{{ order_item.item.name }}</h3>
+                          <p class="cart-item-price">{{ order_item.item.price }}</p>
+                          <p class="cart-item-quantity">Quantity: {{ order_item.quantity }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ order_item.item.price }}</td>
+                  <td>
+                    <button class="btn btn-light btn-sm" onclick="decrementQuantity({{ order_item.item.id }})">-</button>
+                    {{ order_item.quantity }}
+                    <button class="btn btn-light btn-sm" onclick="incrementQuantity({{ order_item.item.id }})">+</button>
+                  </td>
+                  <td>
+                    <td>
+                      {{ order_item.item.price|floatformat:2 }}
+                      <br>
+                      Subtotal: {% with subtotal=order_item.item.price|floatformat:2|floatmul:order_item.quantity %}
+                        {{ subtotal|floatformat:2 }}
+                      {% endwith %}
+                    </td>
+                  </td>
+                  <td>
+                    <button class="remove-btn" onclick="removeFromCart({{ order_item.item.id }})">Remove</button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-4">
+          <div class="order-summary">
+            <h5>Order Summary</h5>
+            <p>Total items: {{ total_quantity }}</p>
+            <p>Total amount: (₦) {{ total_amount|floatformat:2 }}</p>
+            <a href="{% url 'checkout' %}" class="checkout-btn">Checkout</a>
+          </div>
+        </div>
+      </div>
+    </div><br><br><br>
+{% endblock %}
+
+{% block scripts %}
+  function removeFromCart(itemId) {
+    fetch(`/remove-from-cart/${itemId}/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Failed to remove item from cart.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while removing item from cart.');
+      });
+  }
+
+  function incrementQuantity(itemId) {
+    fetch(`/increment-quantity/${itemId}/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Failed to increment quantity.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while incrementing quantity.');
+      });
+  }
+
+  function decrementQuantity(itemId) {
+    fetch(`/decrement-quantity/${itemId}/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Failed to decrement quantity.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while decrementing quantity.');
+      });
+  }
+{% endblock %}

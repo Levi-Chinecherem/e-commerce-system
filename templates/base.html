@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bigi Burger {% block title %}{% endblock title %}</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        {% block style %}
+        {% endblock style %}
+    </style>
+</head>
+
+<body class="bg-[#182028] cursor-default">
+    <!-- ............................ -->
+    <!--  navbar section  -->
+    <!-- ............................ -->
+    <header class="w-full fixed z-50 bg-gray-600 text-white">
+        <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+            <a href="#{% url 'home' %}"
+                class="flex title-font font-medium items-center text-white mb-4 md:mb-0">
+                <span class="ml-3 text-3xl text-white">Bigi-<span class="text-sky-400">Burger</span> </span>
+            </a>
+            <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center"
+                id="navLinks">
+                <a href="{% url 'home' %}"
+                    class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Home</a>
+                <a href="{% url 'menu' %}"
+                    class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Menu</a>
+
+                <a href="{% url 'cart' %}"
+                    class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Cart</a>
+
+                <a href="{% url 'contact' %}"
+                    class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Contact</a>
+                <button
+                    class="inline-flex items-center font-semibold text-gray-900 bg-sky-300 border-0 py-1 px-3 focus:outline-none hover:bg-sky-200 rounded-full mt-4 md:mt-0"
+                    id="registerButton">
+                    {% if user.is_authenticated %}
+                    PROFILE
+                    {% else %}
+                    REGISTER
+                    {% endif %}</button>
+            </nav>
+            <!-- Hamburger Icon -->
+            <div class="md:hidden" id="hamburgerIcon">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Links Container -->
+    <div class="hidden md:block" id="navLinks">
+        <a href="{% url 'home' %}"
+            class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Home</a>
+        <a href="{% url 'menu' %}"
+            class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Menu</a>
+        <a href="{% url 'cart' %}"
+            class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Cart</a>
+        <a href="{% url 'contact' %}"
+            class="mr-5 hover:text-sky-400 text-white font-semibold cursor-pointer">Contact</a>
+        <button
+            class="inline-flex items-center font-semibold text-gray-900 bg-sky-300 border-0 py-1 px-3 focus:outline-none hover:bg-sky-200 rounded-full mt-4 md:mt-0"
+            id="registerButton">
+            {% if user.is_authenticated %}
+            PROFILE
+            {% else %}
+            REGISTER
+            {% endif %}
+        </button>
+    </div>
+
+    <div class="container-fluid py-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Popup Overlay -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            {% if user.is_authenticated %}
+            <span class="popup-close" id="popupClose">&times;</span>
+            <h2>Welcome Back!</h2>
+            <p>Keep enjoying our exclusive benefits and offers.</p>
+            <div class="popup-links">
+                <a class="inline-flex text-gray-400 font-bold hover:bg-sky-200 border-0 py-2 px-6 focus:outline-none bg-sky-300 rounded-full text-sm"
+                    href="{% url 'profile' %}">Profile</a>
+                <a class="inline-flex text-gray-400 font-bold hover:bg-sky-200 border-0 py-2 px-6 focus:outline-none bg-sky-300 rounded-full text-sm"
+                    href="{% url 'edit_user_profile' %}">Edit Profile</a>
+                <a class="inline-flex text-gray-900 font-bold hover:bg-sky-200 border-0 py-2 px-6 focus:outline-none bg-sky-300 rounded-full text-sm"
+                    href="{% url 'logout' %}">Logout</a>
+            </div>
+            {% else %}
+            
+            <span class="popup-close" id="popupClose">&times;</span>
+            <h2>Welcome to our Registration!</h2>
+            <p>Register now to enjoy exclusive benefits and offers.</p>
+            <div class="popup-links">
+                <a class="inline-flex text-gray-400 font-bold hover:bg-sky-200 border-0 py-2 px-6 focus:outline-none bg-sky-300 rounded-full text-sm"
+                    href="{% url 'login' %}">Login</a>
+                <a class="inline-flex text-gray-900 font-bold hover:bg-sky-200 border-0 py-2 px-6 focus:outline-none bg-sky-300 rounded-full text-sm"
+                    href="{% url 'register' %}">Sign Up</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ............................ -->
+    <!--  footer section  -->
+    <!-- ............................ -->
+    <footer class="bg-[#2c3e50] text-[#bdc3c7] py-10 text-center">
+        <div class="footer-logo mb-4 text-4xl font-bold text-white">Bigi-Burger</div>
+        <p class="footer-text text-sm">© 2023 Bigi-Burger — <a href="#"
+                class="text-gray-500" target="_blank" rel="noopener noreferrer">@Meesua</a></p>
+    </footer>
+
+    <!-- ............................ -->
+    <!--  script section  -->
+    <!-- ............................ -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/0.147.0/three.min.js'></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <script>
+        // Get the button and popup elements
+        const registerButton = document.getElementById('registerButton');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupClose = document.getElementById('popupClose');
+        const hamburgerIcon = document.getElementById('hamburgerIcon');
+        const navLinks = document.getElementById('navLinks');
+
+        // Hide the popup overlay initially
+        popupOverlay.style.display = 'none';
+
+        // Show the popup when the button is clicked
+        registerButton.addEventListener('click', () => {
+            popupOverlay.style.display = 'flex';
+        });
+
+        // Close the popup when the close button is clicked
+        popupClose.addEventListener('click', () => {
+            popupOverlay.style.display = 'none';
+        });
+
+        // Close the popup when clicking outside the popup content
+        window.addEventListener('click', (event) => {
+            if (event.target === popupOverlay) {
+                popupOverlay.style.display = 'none';
+            }
+        });
+
+        hamburgerIcon.addEventListener('click', () => {
+          navLinks.classList.toggle('hidden');
+        });
+    </script>
+
+    <script>
+    {% block scripts %}
+    {% endblock %}
+    </script>
+
+</body>
+
+</html>
