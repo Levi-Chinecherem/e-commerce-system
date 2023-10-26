@@ -1,5 +1,7 @@
 # E-Commerce System
 
+![Sample Images](https://github.com/Levi-Chinecherem/e-commerce-system/blob/main/OUTPUTS/s2.png)
+
 This is a comprehensive e-commerce system built with Django, integrating user authentication, shopping cart functionality, payment processing with Paystack, and user profiles.
 
 ## Table of Contents
